@@ -6,7 +6,7 @@ pub mod hello_world {
     tonic::include_proto!("helloworld"); // The string specified here must match the proto package name
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct MyGreeter {}
 
 #[tonic::async_trait]
@@ -22,11 +22,17 @@ impl Greeter for MyGreeter {
     }
 }
 
+impl MyGreeter {
+    pub fn new() -> MyGreeter {
+        MyGreeter {}
+    }
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>>  {
 
     let addr = "[::1]:50051".parse()?;
-    let greeter = MyGreeter::default();
+    let greeter = MyGreeter::new();
 
     use tonic::transport::Server;
     Server::builder()
