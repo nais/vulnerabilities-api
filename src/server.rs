@@ -8,9 +8,9 @@ use tonic::metadata::MetadataValue;
 
 pub mod hello_world {
     tonic::include_proto!("helloworld");
-
-    pub(crate) const FILE_DESCRIPTOR_SET: &[u8] =
-        tonic::include_file_descriptor_set!("helloworld_descriptor");
+    //include!("proto/helloworld.rs");
+    //pub(crate) const FILE_DESCRIPTOR_SET: &[u8] =
+      //  tonic::include_file_descriptor_set!("/src/proto/helloworld_descriptor");
 }
 
 // This function will check the authorization header
@@ -106,12 +106,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         stat: state.clone(),
     };
 
-    let service = tonic_reflection::server::Builder::configure()
+   /* let service = tonic_reflection::server::Builder::configure()
         .register_encoded_file_descriptor_set(hello_world::FILE_DESCRIPTOR_SET)
         .build_v1()?;
-
+*/
     Server::builder()
-        .add_service(service)
+       // .add_service(service)
         .add_service(GreeterServer::new(greeter))
         .add_service(AdminServer::with_interceptor(admin, check_auth))
         .serve(addr)
