@@ -17,7 +17,6 @@ message WorkloadReply {
 message Workload {
   string name = 1;
   string workloadType = 2;
-  string namespace = 4;
   string cluster = 3;
   repeated VulnerabilityMetrics vulnerabilities = 6;
 }

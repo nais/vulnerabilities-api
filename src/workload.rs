@@ -104,7 +104,6 @@ fn process_tag(
                     name: parts[3].to_string(),
                     workload_type: parts[2].to_string(),
                     cluster: parts[0].to_string(),
-                    namespace: namespace_name.to_string(),
                     vulnerabilities: vec![vulnerability.clone()],
                 });
             }
