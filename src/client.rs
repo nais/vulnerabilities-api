@@ -1,20 +1,21 @@
-use hello_world::greeter_client::GreeterClient;
-use hello_world::HelloRequest;
+use vulnerabilities::vulnerabilities_client::VulnerabilitiesClient;
+use vulnerabilities::WorkloadRequest;
 
-pub mod hello_world {
-    tonic::include_proto!("helloworld");
+pub mod vulnerabilities {
+    tonic::include_proto!("vulnerabilities");
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut client = GreeterClient::connect("http://[::1]:50051").await?;
-    let req = tonic::Request::new(HelloRequest {
-        name: "Tonic".into(),
+    let mut client = VulnerabilitiesClient::connect("http://[::1]:50051").await?;
+
+    let req = tonic::Request::new(WorkloadRequest {
+        namespace: "nais-system".to_string(),
+        cluster: "".to_string(),
     });
 
-    let response = client.say_hello(req).await?;
-
+    let response = client.get_workload_vulnerabilities(req).await?;
+    
     println!("RESPONSE={:?}", response);
-
     Ok(())
 }

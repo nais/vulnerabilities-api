@@ -70,13 +70,13 @@ pub struct DependencyMetrics {
     #[serde(rename = "policyViolationsOperationalUnaudited", skip_serializing_if = "Option::is_none")]
     pub policy_violations_operational_unaudited: Option<i32>,
     #[serde(rename = "firstOccurrence")]
-    pub first_occurrence: String,
+    pub first_occurrence: f64,
     #[serde(rename = "lastOccurrence")]
-    pub last_occurrence: String,
+    pub last_occurrence: f64,
 }
 
 impl DependencyMetrics {
-    pub fn new(project: models::Project, component: models::Component, first_occurrence: String, last_occurrence: String) -> DependencyMetrics {
+    pub fn new(project: models::Project, component: models::Component, first_occurrence: f64, last_occurrence: f64) -> DependencyMetrics {
         DependencyMetrics {
             project: Box::new(project),
             component: Box::new(component),

@@ -32,8 +32,8 @@ Name | Type | Description | Notes
 **policy_violations_operational_total** | Option<**i32**> |  | [optional]
 **policy_violations_operational_audited** | Option<**i32**> |  | [optional]
 **policy_violations_operational_unaudited** | Option<**i32**> |  | [optional]
-**first_occurrence** | **String** |  | 
-**last_occurrence** | **String** |  | 
+**first_occurrence** | **f64** |  | 
+**last_occurrence** | **f64** |  | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

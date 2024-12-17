@@ -11943,8 +11943,7 @@
             }
           },
           "lastBomImport": {
-            "type": "string",
-            "format": "date-time"
+            "type": "number"
           },
           "lastBomImportFormat": {
             "type": "string"
@@ -12000,8 +11999,7 @@
           "high",
           "lastOccurrence",
           "low",
-          "medium",
-          "project"
+          "medium"
         ],
         "type": "object",
         "properties": {
@@ -12880,12 +12878,10 @@
             "format": "int32"
           },
           "firstOccurrence": {
-            "type": "string",
-            "format": "date-time"
+            "type": "number"
           },
           "lastOccurrence": {
-            "type": "string",
-            "format": "date-time"
+            "type": "number"
           }
         }
       },

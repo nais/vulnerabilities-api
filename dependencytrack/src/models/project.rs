@@ -50,7 +50,7 @@ pub struct Project {
     #[serde(rename = "tags", skip_serializing_if = "Option::is_none")]
     pub tags: Option<Vec<models::Tag>>,
     #[serde(rename = "lastBomImport", skip_serializing_if = "Option::is_none")]
-    pub last_bom_import: Option<String>,
+    pub last_bom_import: Option<f64>,
     #[serde(rename = "lastBomImportFormat", skip_serializing_if = "Option::is_none")]
     pub last_bom_import_format: Option<String>,
     #[serde(rename = "lastInheritedRiskScore", skip_serializing_if = "Option::is_none")]

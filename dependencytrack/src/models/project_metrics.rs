@@ -13,8 +13,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ProjectMetrics {
-    #[serde(rename = "project")]
-    pub project: Box<models::Project>,
+    #[serde(rename = "project", skip_serializing_if = "Option::is_none")]
+    pub project: Option<Box<models::Project>>,
     #[serde(rename = "critical")]
     pub critical: i32,
     #[serde(rename = "high")]
@@ -78,9 +78,9 @@ pub struct ProjectMetrics {
 }
 
 impl ProjectMetrics {
-    pub fn new(project: models::Project, critical: i32, high: i32, medium: i32, low: i32, first_occurrence: f64, last_occurrence: f64) -> ProjectMetrics {
+    pub fn new(critical: i32, high: i32, medium: i32, low: i32, first_occurrence: f64, last_occurrence: f64) -> ProjectMetrics {
         ProjectMetrics {
-            project: Box::new(project),
+            project: None,
             critical,
             high,
             medium,

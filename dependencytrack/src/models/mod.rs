@@ -1,3 +1,4 @@
+pub extern crate serde_json;
 pub mod about;
 pub use self::about::About;
 pub mod acl_mapping_request;

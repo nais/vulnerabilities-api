@@ -22,7 +22,7 @@ Name | Type | Description | Notes
 **children** | Option<[**Vec<models::Project>**](Project.md)> |  | [optional]
 **properties** | Option<[**Vec<models::ProjectProperty>**](ProjectProperty.md)> |  | [optional]
 **tags** | Option<[**Vec<models::Tag>**](Tag.md)> |  | [optional]
-**last_bom_import** | Option<**String**> |  | [optional]
+**last_bom_import** | Option<**f64**> |  | [optional]
 **last_bom_import_format** | Option<**String**> |  | [optional]
 **last_inherited_risk_score** | Option<**f64**> |  | [optional]
 **active** | Option<**bool**> |  | [optional]

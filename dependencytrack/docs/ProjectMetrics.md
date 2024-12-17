@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**project** | [**models::Project**](Project.md) |  | 
+**project** | Option<[**models::Project**](Project.md)> |  | [optional]
 **critical** | **i32** |  | 
 **high** | **i32** |  | 
 **medium** | **i32** |  | 
