@@ -1,6 +1,6 @@
 CARGO := cargo
 PROJECT_NAME := $(shell basename $(CURDIR))
-SERVER_BIN := helloworld-server
+SERVER_BIN := $(PROJECT_NAME)-server
 BUILD_DIR := target
 GRPC_SERVER := [::1]:50051  # Update with your server address
 

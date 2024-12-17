@@ -4,11 +4,11 @@ version = "0.0.1"
 edition = "2021"
 
 [[bin]] # Bin to run the Vulnerabilities gRPC server
-name = "vulnerabilities-server"
+name = "vulnerabilities-api-server"
 path = "src/main.rs"
 
 [[bin]] # Bin to run the Vulnerabilities gRPC client
-name = "vulnerabilities-client"
+name = "vulnerabilities-api-client"
 path = "src/client.rs"
 
 [dependencies]
