@@ -1,12 +1,12 @@
 use crate::vulnerabilities;
 use dependencytrack::models::Project;
-use vulnerabilities::{VulnerabilityMetrics, Workload, WorkloadReply};
+use vulnerabilities::{VulnerabilityMetrics, Workload, WorkloadMetricReply};
 
-pub fn parse_workloads(projects: Vec<Project>, namespace_name: &str, cluster: &str) -> WorkloadReply {
+pub fn parse_workloads(projects: Vec<Project>, namespace_name: &str, cluster: &str) -> WorkloadMetricReply {
     println!("Workloads for namespace: {}", namespace_name);
 
     let mut workload_count = 0; // Counter for workloads
-    let mut reply: WorkloadReply = WorkloadReply::default();
+    let mut reply: WorkloadMetricReply = WorkloadMetricReply::default();
 
     for project in projects {
         let workloads = process_project(&project, namespace_name, cluster);

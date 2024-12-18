@@ -1,5 +1,5 @@
 use vulnerabilities::vulnerabilities_client::VulnerabilitiesClient;
-use vulnerabilities::WorkloadRequest;
+use vulnerabilities::WorkloadMetricRequest;
 
 pub mod vulnerabilities {
     tonic::include_proto!("vulnerabilities");
@@ -9,13 +9,13 @@ pub mod vulnerabilities {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = VulnerabilitiesClient::connect("http://[::1]:50051").await?;
 
-    let req = tonic::Request::new(WorkloadRequest {
+    let req = tonic::Request::new(WorkloadMetricRequest {
         namespace: "nais-system".to_string(),
         cluster: "".to_string(),
     });
 
-    let response = client.get_workload_vulnerabilities(req).await?;
+    let metric_reply = client.get_workloads_vulnerability_metrics(req).await?;
     
-    println!("RESPONSE={:?}", response);
+    println!("RESPONSE={:?}", metric_reply);
     Ok(())
 }

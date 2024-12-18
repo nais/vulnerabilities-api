@@ -1,10 +1,10 @@
 use std::env;
 use std::net::SocketAddr;
-use tonic::Response;
 use tonic::transport::Server;
-use vulnerabilities::vulnerabilities_server::{VulnerabilitiesServer, Vulnerabilities};
-use vulnerabilities::{WorkloadReply, WorkloadRequest};
-use vulnerabilities::{VulnerabilityDetailsReply, VulnerabilityDetailsRequest};
+use tonic::{Request, Response, Status};
+use vulnerabilities::vulnerabilities_server::{Vulnerabilities, VulnerabilitiesServer};
+use vulnerabilities::{WorkloadMetricReply, WorkloadMetricRequest};
+use vulnerabilities::{WorkloadVulnerabilityDetailsReply, WorkloadVulnerabilityDetailsRequest};
 
 mod dependencytrack;
 mod workload;
@@ -28,14 +28,11 @@ pub struct VulnerabilitiesService {}
 
 #[tonic::async_trait]
 impl Vulnerabilities for VulnerabilitiesService {
-    async fn get_workload_vulnerabilities(
-        &self,
-        request: tonic::Request<WorkloadRequest>,
-    ) -> Result<Response<WorkloadReply>, tonic::Status> {
+    async fn get_workloads_vulnerability_metrics(&self, request: Request<WorkloadMetricRequest>) -> Result<Response<WorkloadMetricReply>, Status> {
         println!("Got a request: {:?}", request);
-        let namespace_prefix = "team:"; 
+        let namespace_prefix = "team:";
         let client = setup_client();
-        
+
         let req = request.into_inner();
         let namespace = req.namespace.as_str();
         let cluster = req.cluster.as_str();
@@ -46,21 +43,18 @@ impl Vulnerabilities for VulnerabilitiesService {
                 let reply = workload::parse_workloads(projects, namespace, cluster);
                 println!("Reply: {:?}", reply);
                 Ok(Response::new(reply))
-            },
+            }
             Err(e) => {
                 eprintln!("Error fetching projects: {}", e);
                 Err(e)
             }
         }
     }
-    
-    async fn get_vulnerability_details_for_workload(
-        &self,
-        request: tonic::Request<VulnerabilityDetailsRequest>,
-    ) -> Result<Response<VulnerabilityDetailsReply>, tonic::Status> {
+
+    async fn get_workload_vulnerability_details(&self, request: Request<WorkloadVulnerabilityDetailsRequest>) -> Result<Response<WorkloadVulnerabilityDetailsReply>, Status> {
         println!("Got a request: {:?}", request);
         let client = setup_client();
-        
+
         let req = request.into_inner();
         let namespace = req.namespace.as_str();
         let cluster = req.cluster.as_str();
@@ -71,7 +65,7 @@ impl Vulnerabilities for VulnerabilitiesService {
         match client.get_vulnerability_details_for_workload(workload, workload_type, namespace, cluster).await {
             Ok(reply) => {
                 Ok(Response::new(reply))
-            },
+            }
             Err(e) => {
                 eprintln!("Error fetching projects: {}", e);
                 Err(e)
@@ -102,7 +96,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_service(VulnerabilitiesServer::new(vulnerability_server))
         .serve(addr)
         .await?;
-    
+
     println!("Successfully fetched vulnerabilities.");
 
     Ok(())

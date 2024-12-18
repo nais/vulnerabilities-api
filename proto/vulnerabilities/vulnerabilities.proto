@@ -2,16 +2,16 @@ syntax = "proto3";
 package vulnerabilities;
 
 service Vulnerabilities {
-  rpc GetWorkloadVulnerabilities (WorkloadRequest) returns (WorkloadReply);
-  rpc GetVulnerabilityDetailsForWorkload (VulnerabilityDetailsRequest) returns (VulnerabilityDetailsReply);
+  rpc GetWorkloadsVulnerabilityMetrics (WorkloadMetricRequest) returns (WorkloadMetricReply);
+  rpc GetWorkloadVulnerabilityDetails (WorkloadVulnerabilityDetailsRequest) returns (WorkloadVulnerabilityDetailsReply);
 }
 
-message WorkloadRequest {
+message WorkloadMetricRequest {
   string namespace = 1;
   string cluster = 2;
 }
 
-message WorkloadReply {
+message WorkloadMetricReply {
   repeated Workload workload = 1;
 }
 
@@ -30,14 +30,14 @@ message VulnerabilityMetrics {
   int32 unassigned = 5;
 }
 
-message VulnerabilityDetailsRequest {
+message WorkloadVulnerabilityDetailsRequest {
   string namespace = 1;
   string cluster = 2;
   string workload = 3;
   string workloadType = 4;
 }
 
-message VulnerabilityDetailsReply {
+message WorkloadVulnerabilityDetailsReply {
   repeated VulnerabilityDetails vulnerabilityDetails = 1;
 }
 

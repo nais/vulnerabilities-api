@@ -1,4 +1,4 @@
-use crate::vulnerabilities::{Cwe, Severity, VulnerabilityAlias, VulnerabilityDetails, VulnerabilityDetailsReply};
+use crate::vulnerabilities::{Cwe, Severity, VulnerabilityAlias, VulnerabilityDetails, WorkloadVulnerabilityDetailsReply};
 use dependencytrack::apis::configuration::Configuration;
 use dependencytrack::apis::{project_api, vulnerability_api};
 use dependencytrack::models::Project;
@@ -69,7 +69,7 @@ impl Client {
         workload_type: &str,
         namespace: &str,
         cluster: &str,
-    ) -> Result<VulnerabilityDetailsReply, Status> {
+    ) -> Result<WorkloadVulnerabilityDetailsReply, Status> {
         let tag = format!("workload:{}|{}|{}|{}", cluster, namespace, workload_type, workload);
 
         let projects = match self.get_projects_by_tag(&tag).await {
@@ -86,7 +86,7 @@ impl Client {
         }
     }
 
-    async fn get_vulnerabilities(&self, projects: Vec<Project>) -> Result<VulnerabilityDetailsReply, Status> {
+    async fn get_vulnerabilities(&self, projects: Vec<Project>) -> Result<WorkloadVulnerabilityDetailsReply, Status> {
         let mut details = Vec::new();
 
         for project in projects {
@@ -129,7 +129,7 @@ impl Client {
             }
         }
 
-        Ok(VulnerabilityDetailsReply {
+        Ok(WorkloadVulnerabilityDetailsReply {
             vulnerability_details: details,
         })
     }
