@@ -2041,6 +2041,7 @@ dependencies = [
  "tonic",
  "tonic-build",
  "tonic-reflection",
+ "uuid",
 ]
 
 [[package]]

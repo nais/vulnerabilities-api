@@ -2,7 +2,8 @@ syntax = "proto3";
 package vulnerabilities;
 
 service Vulnerabilities {
-  rpc GetWorkloadVulnerabilities (WorkloadRequest) returns (WorkloadReply); 
+  rpc GetWorkloadVulnerabilities (WorkloadRequest) returns (WorkloadReply);
+  rpc GetVulnerabilityDetailsForWorkload (VulnerabilityDetailsRequest) returns (VulnerabilityDetailsReply);
 }
 
 message WorkloadRequest {
@@ -29,3 +30,49 @@ message VulnerabilityMetrics {
   int32 unassigned = 5;
 }
 
+message VulnerabilityDetailsRequest {
+  string namespace = 1;
+  string cluster = 2;
+  string workload = 3;
+  string workloadType = 4;
+}
+
+message VulnerabilityDetailsReply {
+  repeated VulnerabilityDetails vulnerabilityDetails = 1;
+}
+
+message VulnerabilityDetails {
+  string title = 1;
+  string vulnId = 2;
+  string source = 3;
+  string description = 4;
+  string detail = 5;
+  string recommendation = 6;
+  string created = 7;
+  string published = 8;
+  string updated = 9;
+  repeated Cwe cwes = 10;
+  Severity severity = 11;
+  repeated VulnerabilityAlias aliases = 13;
+}
+
+message Cwe {
+  int32 cweId = 1;
+  string cweName = 2;
+}
+
+message VulnerabilityAlias {
+  string cveId = 1;
+  string ghsaId = 2;
+  string osvId = 3;
+  string gsdId = 4;
+}
+
+enum Severity {
+  UNKNOWN = 0;
+  CRITICAL = 1;
+  HIGH = 2;
+  MEDIUM = 3;
+  LOW = 4;
+  UNASSIGNED = 5;
+}

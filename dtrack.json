@@ -13222,8 +13222,7 @@
           "cwes": {
             "type": "array",
             "items": {
-              "type": "integer",
-              "format": "int32"
+              "$ref": "#/components/schemas/Cwe"
             }
           },
           "cvssV2BaseScore": {

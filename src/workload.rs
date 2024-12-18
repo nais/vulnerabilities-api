@@ -1,40 +1,6 @@
 use crate::vulnerabilities;
 use dependencytrack::models::Project;
-use serde::{Deserialize, Serialize};
 use vulnerabilities::{VulnerabilityMetrics, Workload, WorkloadReply};
-
-#[derive(Debug)]
-#[allow(dead_code)]
-pub struct Namespace {
-    name: String,
-    workloads: Vec<Workload>,
-}
-
-#[derive(Debug, Clone, Copy)]
-#[allow(dead_code)]
-struct Metrics {
-    critical: i32,
-    high: i32,
-    medium: i32,
-    low: i32,
-    unassigned: i32,
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum Severity {
-    #[serde(rename = "CRITICAL")]
-    Critical,
-    #[serde(rename = "HIGH")]
-    High,
-    #[serde(rename = "MEDIUM")]
-    Medium,
-    #[serde(rename = "LOW")]
-    Low,
-    #[serde(rename = "INFO")]
-    Info,
-    #[serde(rename = "UNASSIGNED")]
-    Unassigned,
-}
 
 pub fn parse_workloads(projects: Vec<Project>, namespace_name: &str, cluster: &str) -> WorkloadReply {
     println!("Workloads for namespace: {}", namespace_name);

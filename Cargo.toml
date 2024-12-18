@@ -24,6 +24,7 @@ dependencytrack = { path = "./dependencytrack" }
 serde = { version = "1.0.216", features = ["derive"] }
 serde_json = "1.0.133"
 dotenv = "0.15.0"
+uuid = { version = "1.11.0", features = ["v4"] }
 
 [build-dependencies]
 tonic-build = "0.12.3"

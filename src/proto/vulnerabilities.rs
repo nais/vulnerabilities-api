@@ -16,8 +16,10 @@ pub struct Workload {
     #[prost(string, tag = "1")]
     pub name: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
-    pub r#type: ::prost::alloc::string::String,
-    #[prost(message, repeated, tag = "3")]
+    pub workload_type: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub cluster: ::prost::alloc::string::String,
+    #[prost(message, repeated, tag = "6")]
     pub vulnerabilities: ::prost::alloc::vec::Vec<VulnerabilityMetrics>,
 }
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
@@ -31,7 +33,106 @@ pub struct VulnerabilityMetrics {
     #[prost(int32, tag = "4")]
     pub low: i32,
     #[prost(int32, tag = "5")]
-    pub unknown: i32,
+    pub unassigned: i32,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct VulnerabilityDetailsRequest {
+    #[prost(string, tag = "1")]
+    pub namespace: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub cluster: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub workload: ::prost::alloc::string::String,
+    #[prost(string, tag = "4")]
+    pub workload_type: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct VulnerabilityDetailsReply {
+    #[prost(message, repeated, tag = "1")]
+    pub vulnerability_details: ::prost::alloc::vec::Vec<VulnerabilityDetails>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct VulnerabilityDetails {
+    #[prost(string, tag = "1")]
+    pub title: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub vuln_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub source: ::prost::alloc::string::String,
+    #[prost(string, tag = "4")]
+    pub description: ::prost::alloc::string::String,
+    #[prost(string, tag = "5")]
+    pub detail: ::prost::alloc::string::String,
+    #[prost(string, tag = "6")]
+    pub recommendation: ::prost::alloc::string::String,
+    #[prost(string, tag = "7")]
+    pub created: ::prost::alloc::string::String,
+    #[prost(string, tag = "8")]
+    pub published: ::prost::alloc::string::String,
+    #[prost(string, tag = "9")]
+    pub updated: ::prost::alloc::string::String,
+    #[prost(message, repeated, tag = "10")]
+    pub cwes: ::prost::alloc::vec::Vec<Cwe>,
+    #[prost(enumeration = "Severity", tag = "11")]
+    pub severity: i32,
+    #[prost(message, repeated, tag = "13")]
+    pub aliases: ::prost::alloc::vec::Vec<VulnerabilityAlias>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Cwe {
+    #[prost(int32, tag = "1")]
+    pub cwe_id: i32,
+    #[prost(string, tag = "2")]
+    pub cwe_name: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct VulnerabilityAlias {
+    #[prost(string, tag = "1")]
+    pub cve_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub ghsa_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub osv_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "4")]
+    pub gsd_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum Severity {
+    Unknown = 0,
+    Critical = 1,
+    High = 2,
+    Medium = 3,
+    Low = 4,
+    Unassigned = 5,
+}
+impl Severity {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unknown => "UNKNOWN",
+            Self::Critical => "CRITICAL",
+            Self::High => "HIGH",
+            Self::Medium => "MEDIUM",
+            Self::Low => "LOW",
+            Self::Unassigned => "UNASSIGNED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN" => Some(Self::Unknown),
+            "CRITICAL" => Some(Self::Critical),
+            "HIGH" => Some(Self::High),
+            "MEDIUM" => Some(Self::Medium),
+            "LOW" => Some(Self::Low),
+            "UNASSIGNED" => Some(Self::Unassigned),
+            _ => None,
+        }
+    }
 }
 /// Generated client implementations.
 pub mod vulnerabilities_client {
@@ -150,6 +251,35 @@ pub mod vulnerabilities_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        pub async fn get_vulnerability_details_for_workload(
+            &mut self,
+            request: impl tonic::IntoRequest<super::VulnerabilityDetailsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::VulnerabilityDetailsReply>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/vulnerabilities.Vulnerabilities/GetVulnerabilityDetailsForWorkload",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "vulnerabilities.Vulnerabilities",
+                        "GetVulnerabilityDetailsForWorkload",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -169,6 +299,13 @@ pub mod vulnerabilities_server {
             &self,
             request: tonic::Request<super::WorkloadRequest>,
         ) -> std::result::Result<tonic::Response<super::WorkloadReply>, tonic::Status>;
+        async fn get_vulnerability_details_for_workload(
+            &self,
+            request: tonic::Request<super::VulnerabilityDetailsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::VulnerabilityDetailsReply>,
+            tonic::Status,
+        >;
     }
     #[derive(Debug)]
     pub struct VulnerabilitiesServer<T> {
@@ -280,6 +417,57 @@ pub mod vulnerabilities_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetWorkloadVulnerabilitiesSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/vulnerabilities.Vulnerabilities/GetVulnerabilityDetailsForWorkload" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetVulnerabilityDetailsForWorkloadSvc<T: Vulnerabilities>(
+                        pub Arc<T>,
+                    );
+                    impl<
+                        T: Vulnerabilities,
+                    > tonic::server::UnaryService<super::VulnerabilityDetailsRequest>
+                    for GetVulnerabilityDetailsForWorkloadSvc<T> {
+                        type Response = super::VulnerabilityDetailsReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::VulnerabilityDetailsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Vulnerabilities>::get_vulnerability_details_for_workload(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetVulnerabilityDetailsForWorkloadSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

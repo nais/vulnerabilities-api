@@ -2,9 +2,9 @@ use std::env;
 use std::net::SocketAddr;
 use tonic::Response;
 use tonic::transport::Server;
-use vulnerabilities::vulnerabilities_server::VulnerabilitiesServer;
+use vulnerabilities::vulnerabilities_server::{VulnerabilitiesServer, Vulnerabilities};
 use vulnerabilities::{WorkloadReply, WorkloadRequest};
-use crate::vulnerabilities::vulnerabilities_server::Vulnerabilities;
+use vulnerabilities::{VulnerabilityDetailsReply, VulnerabilityDetailsRequest};
 
 mod dependencytrack;
 mod workload;
@@ -49,7 +49,32 @@ impl Vulnerabilities for VulnerabilitiesService {
             },
             Err(e) => {
                 eprintln!("Error fetching projects: {}", e);
-                Err(tonic::Status::internal("Error fetching projects"))
+                Err(e)
+            }
+        }
+    }
+    
+    async fn get_vulnerability_details_for_workload(
+        &self,
+        request: tonic::Request<VulnerabilityDetailsRequest>,
+    ) -> Result<Response<VulnerabilityDetailsReply>, tonic::Status> {
+        println!("Got a request: {:?}", request);
+        let client = setup_client();
+        
+        let req = request.into_inner();
+        let namespace = req.namespace.as_str();
+        let cluster = req.cluster.as_str();
+        let workload = req.workload.as_str();
+        let workload_type = req.workload_type.as_str();
+
+        // Fetch projects by tag
+        match client.get_vulnerability_details_for_workload(workload, workload_type, namespace, cluster).await {
+            Ok(reply) => {
+                Ok(Response::new(reply))
+            },
+            Err(e) => {
+                eprintln!("Error fetching projects: {}", e);
+                Err(e)
             }
         }
     }

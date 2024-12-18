@@ -10,7 +10,13 @@ It gathers information from different sources and provides a unified interface t
 
 ## How to run
 
-Set up a `.env` file in your local environment, see .env.example for reference.
+Set up a `.env` file in your local environment, see `.env.example` for an example.
+
+Build the project by running the following command:
+
+```shell
+make build
+```
 
 Run the following command to start the server:
 
