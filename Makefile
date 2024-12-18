@@ -49,4 +49,15 @@ ui:
 	}
 	grpcui -plaintext $(GRPC_SERVER)
 
-# grpcurl -plaintext -d '{"name":"youssef" }' '[::1]:50051' helloworld.Greeter.SayHello
+.PHONY: generate
+generate_dp_track:
+	@echo "Generating Rust code from the OpenAPI specification..."
+	@openapi-generator generate \
+        -i dtrack.json \
+        -g rust \
+        -o dependencytrack \
+        --package-name dependencytrack || { \
+            echo "Error: openapi-generator is not installed or failed to execute."; \
+            echo "Please visit https://openapi-generator.tech/docs/installation/ for installation instructions."; \
+            exit 1; \
+        }
