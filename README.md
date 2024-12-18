@@ -55,3 +55,7 @@ generated code.
 
 1. Update the OpenAPI specification (dtrack.json) to match the server's actual response.
 2. Regenerate the code by running:
+
+```shell
+make generate_dp_track
+```
