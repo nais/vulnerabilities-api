@@ -16,6 +16,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let metric_reply = client.get_workloads_vulnerability_metrics(req).await?;
     
-    println!("RESPONSE={:?}", metric_reply);
+    println!("METRICS={:?}", metric_reply);
+    
+    let vulnz_reply = client.get_workload_vulnerability_details(
+        tonic::Request::new(vulnerabilities::WorkloadVulnerabilityDetailsRequest {
+            workload: "certificator".to_string(),
+            workload_type: "app".to_string(),
+            namespace: "nais-system".to_string(),
+            cluster: "dev".to_string(),
+        })
+    ).await?;
+    
+    println!("VULNERABILITIES={:?}", vulnz_reply);
+    
     Ok(())
 }
