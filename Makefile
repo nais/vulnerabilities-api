@@ -20,9 +20,14 @@ run:
 test:
 	$(CARGO) test
 
+.PHONY: fmt-check
+
+check:
+	$(CARGO) fmt --package vulnerabilities -- --check
+
 .PHONY: fmt
 fmt:
-	$(CARGO) fmt --manifest-path Cargo.toml
+	$(CARGO) fmt --package vulnerabilities
 
 .PHONY: lint
 lint:
