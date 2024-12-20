@@ -15,20 +15,22 @@ pub mod vulnerabilities {
 
 fn setup_client() -> dependencytrack::Client {
     dotenv::dotenv().ok();
-    let base_url = env::var("DEPENDENCYTRACK_BASE_URL")
-        .expect("DEPENDENCYTRACK_BASE_URL must be set");
-    let api_key = env::var("DEPENDENCYTRACK_API_KEY")
-        .expect("DEPENDENCYTRACK_API_KEY must be set");
+    let base_url =
+        env::var("DEPENDENCYTRACK_BASE_URL").expect("DEPENDENCYTRACK_BASE_URL must be set");
+    let api_key = env::var("DEPENDENCYTRACK_API_KEY").expect("DEPENDENCYTRACK_API_KEY must be set");
 
     dependencytrack::Client::new(base_url, api_key)
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct VulnerabilitiesService {}
 
 #[tonic::async_trait]
 impl Vulnerabilities for VulnerabilitiesService {
-    async fn get_workloads_vulnerability_metrics(&self, request: Request<WorkloadMetricRequest>) -> Result<Response<WorkloadMetricReply>, Status> {
+    async fn get_workloads_vulnerability_metrics(
+        &self,
+        request: Request<WorkloadMetricRequest>,
+    ) -> Result<Response<WorkloadMetricReply>, Status> {
         println!("Got a request: {:?}", request);
         let namespace_prefix = "team:";
         let client = setup_client();
@@ -38,7 +40,10 @@ impl Vulnerabilities for VulnerabilitiesService {
         let cluster = req.cluster.as_str();
 
         // Fetch projects by tag
-        match client.get_projects_by_tag(&format!("{}{}", namespace_prefix, namespace)).await {
+        match client
+            .get_projects_by_tag(&format!("{}{}", namespace_prefix, namespace))
+            .await
+        {
             Ok(projects) => {
                 let reply = workload::parse_workloads(projects, namespace, cluster);
                 println!("Reply: {:?}", reply);
@@ -51,7 +56,10 @@ impl Vulnerabilities for VulnerabilitiesService {
         }
     }
 
-    async fn get_workload_vulnerability_details(&self, request: Request<WorkloadVulnerabilityDetailsRequest>) -> Result<Response<WorkloadVulnerabilityDetailsReply>, Status> {
+    async fn get_workload_vulnerability_details(
+        &self,
+        request: Request<WorkloadVulnerabilityDetailsRequest>,
+    ) -> Result<Response<WorkloadVulnerabilityDetailsReply>, Status> {
         println!("Got a request: {:?}", request);
         let client = setup_client();
 
@@ -62,10 +70,11 @@ impl Vulnerabilities for VulnerabilitiesService {
         let workload_type = req.workload_type.as_str();
 
         // Fetch projects by tag
-        match client.get_vulnerability_details_for_workload(workload, workload_type, namespace, cluster).await {
-            Ok(reply) => {
-                Ok(Response::new(reply))
-            }
+        match client
+            .get_vulnerability_details_for_workload(workload, workload_type, namespace, cluster)
+            .await
+        {
+            Ok(reply) => Ok(Response::new(reply)),
             Err(e) => {
                 eprintln!("Error fetching projects: {}", e);
                 Err(e)
@@ -76,12 +85,6 @@ impl Vulnerabilities for VulnerabilitiesService {
 
 impl VulnerabilitiesService {
     pub fn new() -> VulnerabilitiesService {
-        VulnerabilitiesService {}
-    }
-}
-
-impl Default for VulnerabilitiesService {
-    fn default() -> Self {
         VulnerabilitiesService {}
     }
 }
