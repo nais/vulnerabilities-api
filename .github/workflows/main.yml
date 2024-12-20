@@ -21,6 +21,17 @@ jobs:
           toolchain: stable
           components: rustfmt, clippy
 
+      - name: Get Protoc version from .tool-versions
+        id: get_version
+        run: |
+          protoc_version=$(grep '^protoc' .tool-versions | awk '{print $2}')
+          echo "PROTOCOL_BUFFERS_VERSION=$protoc_version" >> $GITHUB_ENV
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: ${{ env.PROTOCOL_BUFFERS_VERSION }}
+
       - name: Build
         run: make build
 
