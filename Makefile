@@ -18,6 +18,7 @@ test:
 	$(CARGO) test
 
 .PHONY: fmt-check
+fmt-check: check fmt
 
 check:
 	$(CARGO) fmt --package vulnerabilities -- --check
