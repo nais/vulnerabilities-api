@@ -17,7 +17,7 @@ prost = "0.13.4"
 tokio = { version = "1.42.0", features = ["macros", "rt-multi-thread", "rt"] }
 tonic-reflection = "0.12.3"
 futures = "0.3.31"
-reqwest = { version = "0.12.9", features = ["json", "stream"] }
+reqwest = { version = "0.12.12", features = ["json", "stream"] }
 syn = "2.0.90"
 dependencytrack = { path = "./dependencytrack" }
 serde = { version = "1.0.216", features = ["derive"] }
