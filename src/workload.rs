@@ -24,7 +24,7 @@ fn process_project(project: &Project, namespace_name: &str, cluster: &str) -> Ve
     let metrics_data = match &project.metrics {
         Some(metrics) => metrics,
         None => {
-            eprintln!("Project {:?} has no metrics, skipping...", project.name);
+            eprintln!("Project \"{:?}\" has no metrics, skipping...", project.name);
             return vec![];
         }
     };
@@ -74,8 +74,179 @@ fn process_tag(
                 });
             }
         } else {
-            eprintln!("Invalid workload tag format: {}", tag_name);
+            eprintln!(
+                "Invalid workload tag format or namespace does not match: {}",
+                tag_name
+            );
         }
     }
     None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use dependencytrack::models::{Project, ProjectMetrics, Tag};
+
+    // Mock project data with valid metrics and tags
+    fn create_mock_project(
+        name: &str,
+        namespace: &str,
+        metrics: Option<ProjectMetrics>,
+        tags: Option<Vec<Tag>>,
+    ) -> Project {
+        Project {
+            author: None,
+            publisher: None,
+            manufacturer: None,
+            supplier: None,
+            group: Some(namespace.to_string()),
+            name: Some(name.to_string()),
+            metrics: metrics.map(Box::new),
+            tags,
+            last_bom_import: None,
+            last_bom_import_format: None,
+            last_inherited_risk_score: None,
+            active: None,
+            external_references: None,
+            metadata: None,
+            uuid: uuid::Uuid::new_v4(),
+            parent: None,
+            children: None,
+            description: Some("Description".to_string()),
+            version: None,
+            classifier: None,
+            cpe: None,
+            purl: None,
+            swid_tag_id: None,
+            direct_dependencies: None,
+            properties: None,
+            versions: None,
+            bom_ref: None,
+        }
+    }
+
+    fn create_mock_metrics() -> Option<ProjectMetrics> {
+        Some(ProjectMetrics {
+            project: None,
+            critical: 1,
+            high: 2,
+            medium: 3,
+            low: 4,
+            unassigned: Some(5),
+            vulnerabilities: None,
+            vulnerable_components: None,
+            components: None,
+            suppressed: None,
+            findings_total: None,
+            findings_audited: None,
+            findings_unaudited: None,
+            inherited_risk_score: None,
+            policy_violations_fail: None,
+            policy_violations_warn: None,
+            policy_violations_info: None,
+            policy_violations_total: None,
+            policy_violations_audited: None,
+            policy_violations_unaudited: None,
+            policy_violations_security_total: None,
+            policy_violations_security_audited: None,
+            policy_violations_security_unaudited: None,
+            policy_violations_license_total: None,
+            policy_violations_license_audited: None,
+            policy_violations_license_unaudited: None,
+            policy_violations_operational_total: None,
+            policy_violations_operational_audited: None,
+            policy_violations_operational_unaudited: None,
+            first_occurrence: 0.0,
+            last_occurrence: 0.0,
+        })
+    }
+
+    // Test for valid workloads when a project has metrics and matching tags
+    #[test]
+    fn test_parse_workloads_valid() {
+        let metrics = create_mock_metrics();
+
+        let tag = Tag {
+            name: Some("workload:cluster1|namespace1|type1|workload1".to_string()),
+        };
+
+        let project = create_mock_project("Test Project", "namespace1", metrics, Some(vec![tag]));
+
+        let projects = vec![project];
+        let namespace_name = "namespace1";
+        let cluster = "cluster1";
+
+        let reply = parse_workloads(projects, namespace_name, cluster);
+
+        assert_eq!(reply.workload.len(), 1);
+        assert_eq!(reply.workload[0].name, "workload1");
+        assert_eq!(reply.workload[0].workload_type, "type1");
+        assert_eq!(reply.workload[0].cluster, "cluster1");
+        assert_eq!(reply.workload[0].vulnerabilities.len(), 1);
+    }
+
+    // Test for skipping projects with no metrics
+    #[test]
+    fn test_parse_workloads_no_metrics() {
+        let project = create_mock_project(
+            "Test Project",
+            "namespace1",
+            None,         // No metrics
+            Some(vec![]), // No tags
+        );
+
+        let projects = vec![project];
+        let namespace_name = "namespace1";
+        let cluster = "cluster1";
+
+        let reply = parse_workloads(projects, namespace_name, cluster);
+
+        assert_eq!(reply.workload.len(), 0);
+    }
+
+    // Test for invalid tags in projects
+    #[test]
+    fn test_parse_workloads_invalid_tag() {
+        let metrics = create_mock_metrics();
+
+        let tag = Tag {
+            name: Some("invalid_tag_format".to_string()), // Invalid tag
+        };
+
+        let project = create_mock_project("Test Project", "namespace1", metrics, Some(vec![tag]));
+
+        let projects = vec![project];
+        let namespace_name = "namespace1";
+        let cluster = "cluster1";
+
+        let reply = parse_workloads(projects, namespace_name, cluster);
+
+        assert_eq!(reply.workload.len(), 0); // Invalid tags should result in no workloads
+    }
+
+    // Test for projects with tags that do not match the namespace or cluster
+    #[test]
+    fn test_parse_workloads_no_match() {
+        let metrics = create_mock_metrics();
+
+        let tag = Tag {
+            name: Some("workload:cluster2|namespace2|type2|workload2".to_string()), // Non-matching /namespace
+        };
+
+        let project = create_mock_project(
+            "Test Project",
+            "namespace1", // Namespace doesn't match
+            metrics,
+            Some(vec![tag]),
+        );
+
+        let projects = vec![project];
+        let namespace_name = "namespace1";
+        let cluster = "cluster1";
+
+        let reply = parse_workloads(projects, namespace_name, cluster);
+
+        assert_eq!(reply.workload.len(), 0); // No match, no workloads
+    }
 }
