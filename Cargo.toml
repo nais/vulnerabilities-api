@@ -21,7 +21,7 @@ reqwest = { version = "0.12.12", features = ["json", "stream"] }
 syn = "2.0.90"
 dependencytrack = { path = "./dependencytrack" }
 serde = { version = "1.0.216", features = ["derive"] }
-serde_json = "1.0.133"
+serde_json = "1.0.138"
 dotenv = "0.15.0"
 uuid = { version = "1.11.0", features = ["v4"] }
 
@@ -32,6 +32,6 @@ tokio = { version = "1", features = ["full"] }
 [build-dependencies]
 tonic-build = "0.12.3"
 progenitor = "0.9.1"
-serde_json = "1.0.133"
+serde_json = "1.0.138"
 syn = "2.0.90"
 prettyplease = "0.2.27"
